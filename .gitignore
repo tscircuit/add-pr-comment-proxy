@@ -103,4 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+<<<<<<< HEAD
 test.sh
+=======
+test.sh
+.vercel
+>>>>>>> 67c2fbc (Consolidated all changes into one commit)

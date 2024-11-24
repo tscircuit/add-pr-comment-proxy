@@ -2,7 +2,10 @@
   "name": "add-pr-comment-proxy",
   "version": "0.0.1",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "build": "tsc",
+    "vercel-build": "npm run build",
+    "deploy": "vercel deploy --prod"
   },
   "repository": {
     "type": "git",
@@ -15,18 +18,22 @@
   },
   "homepage": "https://github.com/mshick/add-pr-comment-proxy#readme",
   "engines": {
-    "node": "12.11.0"
+    "node": "22.x"
   },
   "dependencies": {
-    "@actions/http-client": "^1.0.8",
+    "@actions/http-client": "^1.0.11",
+    "@vercel/node": "^2.10.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "express-json-api-error-handler": "^6.0.0"
+    "express-json-api-error-handler": "^6.0.0",
+    "next": "^14.2.18"
   },
   "devDependencies": {
+    "@types/node": "^18.19.65",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^5.7.2"
   }
 }
