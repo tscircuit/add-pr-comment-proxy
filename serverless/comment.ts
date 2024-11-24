@@ -30,7 +30,7 @@ export default async function handler(
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-
+  // Initialize HTTP client
   const client = new HttpClient('add-pr-comment-proxy')
 
   // Extract token from Authorization header
