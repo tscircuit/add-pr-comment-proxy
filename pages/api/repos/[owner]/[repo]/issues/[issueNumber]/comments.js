@@ -1,14 +1,11 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const {HttpClient} = require('@actions/http-client')
-const {ErrorHandler, BadRequestError} = require('express-json-api-error-handler')
+import { HttpClient } from '@actions/http-client'
 
 const createComment = async (http, params) => {
-  const {repoToken, owner, repo, issueNumber, body} = params
+  const { repoToken, owner, repo, issueNumber, body } = params
 
   return http.postJson(
     `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
-    {body},
+    { body },
     {
       accept: 'application/vnd.github.v3+json',
       authorization: `token ${repoToken}`,
@@ -43,36 +40,31 @@ const checkToken = async (http, token) => {
   }
 }
 
-const app = express()
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
 
-app.use((req, res, next) => {
-  req.httpClient = new HttpClient('http-client-add-pr-comment-bot')
-  next()
-})
-app.use(bodyParser.json())
+  const httpClient = new HttpClient('http-client-add-pr-comment-bot')
 
-app.post('/repos/:owner/:repo/issues/:issueNumber/comments', async (req, res, next) => {
   try {
-    const isTokenValid = await checkToken(req.httpClient, req.header('temporary-github-token'))
+    const isTokenValid = await checkToken(httpClient, req.headers['temporary-github-token'])
     if (!isTokenValid) {
-      throw new BadRequestError('must provide a valid temporary github token')
+      return res.status(400).json({ error: 'Must provide a valid temporary github token' })
     }
 
-    const response = await createComment(req.httpClient, {
-      ...req.params,
-      ...req.body,
+    const { owner, repo, issueNumber } = req.query
+    const response = await createComment(httpClient, {
+      owner,
+      repo,
+      issueNumber,
+      body: req.body.body,
       repoToken: process.env.GITHUB_TOKEN,
     })
 
-    res.status(200).send(response).end()
+    return res.status(200).json(response)
   } catch (err) {
-    next(err)
+    console.error(JSON.stringify(err))
+    return res.status(500).json({ error: 'Internal server error' })
   }
-})
-
-// Must use last
-const errorHandler = new ErrorHandler()
-errorHandler.setErrorEventHandler(err => console.log(JSON.stringify(err)))
-app.use(errorHandler.handle)
-
-app.listen(process.env.PORT || 3000)
+}
