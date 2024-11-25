@@ -1,27 +1,27 @@
 {
   "name": "add-pr-comment-proxy",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "start": "node app.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mshick/add-pr-comment-proxy.git"
+    "url": "git+https://github.com/tscircuit/add-pr-comment-proxy.git"
   },
-  "author": "Michael Shick <m@shick.us>",
+  "author": "Severin Ibarluzea",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mshick/add-pr-comment-proxy/issues"
+    "url": "https://github.com/tscircuit/add-pr-comment-proxy/issues"
   },
-  "homepage": "https://github.com/mshick/add-pr-comment-proxy#readme",
-  "engines": {
-    "node": "12.11.0"
-  },
+  "homepage": "https://github.com/tscircuit/add-pr-comment-proxy#readme",
   "dependencies": {
     "@actions/http-client": "^1.0.8",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "express-json-api-error-handler": "^6.0.0"
+    "next": "^12.3.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "eslint": "^7.4.0",

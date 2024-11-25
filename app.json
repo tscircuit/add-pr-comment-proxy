@@ -1,9 +1,0 @@
-{
-  "name": "add-pr-comment-proxy",
-  "env": {
-    "GITHUB_TOKEN": {
-      "description": "Provide a GitHub personal access token with the repo:public_repo scope",
-      "required": true
-    }
-  }
-}
