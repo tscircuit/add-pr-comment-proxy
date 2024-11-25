@@ -1,28 +1,10 @@
 # add-pr-comment-proxy
 
+The tscircuit add-pr-comment-proxy url is https://add-pr-comment-proxy-tscircuit.vercel.app/
+
 A simple proxy for PR comments built with Next.js. Works well with [add-pr-comment](https://github.com/mshick/add-pr-comment/). Workaround for GitHub making all token permissions read-only when a fork is submitted for a PR. See [this discussion](https://github.community/t/github-actions-are-severely-limited-on-prs/18179/4) for more detail.
 
 ## Deploy
-
-**Requirements**
-
-- A [personal access token](https://github.com/settings/tokens) with the `repo:public_repos` scope if you're using this to support a public repo. Your use-case might require other scopes.
-- Node.js 14 or higher
-
-**Development**
-
-```bash
-npm install
-npm run dev
-```
-
-**Production**
-
-```bash
-npm install
-npm run build
-npm start
-```
 
 The API endpoint will be available at `/api/repos/:owner/:repo/issues/:issueNumber/comments`
 
