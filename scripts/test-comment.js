@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { HttpClient } = require('@actions/http-client')
+import { HttpClient } from '@actions/http-client'
 
 function parseGitHubUrl(url) {
   try {
@@ -25,7 +25,9 @@ async function testComment(prUrl) {
   const http = new HttpClient('test-comment-script')
   
   const testComment = {
-    body: `Test comment from bot at ${new Date().toISOString()}`
+    body: `Test comment from bot at ${new Date().toISOString()}`,
+    header: 'Test Comment Header',
+    allowRepeats: false
   }
 
   try {
