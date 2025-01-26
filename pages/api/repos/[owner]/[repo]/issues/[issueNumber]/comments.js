@@ -1,5 +1,30 @@
 import { HttpClient } from '@actions/http-client'
 
+const getComments = async (http, params) => {
+  const { repoToken, owner, repo, issueNumber } = params
+  
+  return http.getJson(
+    `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
+    {
+      accept: 'application/vnd.github.v3+json',
+      authorization: `token ${repoToken}`,
+    }
+  )
+}
+
+const updateComment = async (http, params) => {
+  const { repoToken, owner, repo, commentId, body } = params
+
+  return http.patchJson(
+    `https://api.github.com/repos/${owner}/${repo}/issues/comments/${commentId}`,
+    { body },
+    {
+      accept: 'application/vnd.github.v3+json',
+      authorization: `token ${repoToken}`,
+    }
+  )
+}
+
 const createComment = async (http, params) => {
   const { repoToken, owner, repo, issueNumber, body } = params
 
@@ -54,11 +79,41 @@ export default async function handler(req, res) {
     }
 
     const { owner, repo, issueNumber } = req.query
+    const { body, messageId } = req.body
+
+    // If messageId is provided, try to find and update existing comment
+    if (messageId) {
+      const commentsResponse = await getComments(httpClient, {
+        owner,
+        repo,
+        issueNumber,
+        repoToken: process.env.GITHUB_TOKEN,
+      })
+
+      const comments = commentsResponse.result || []
+      const existingComment = comments.find(comment => 
+        comment.body.includes(`<!-- message-id: ${messageId} -->`)
+      )
+
+      if (existingComment) {
+        // Update existing comment
+        const response = await updateComment(httpClient, {
+          owner,
+          repo,
+          commentId: existingComment.id,
+          body: `<!-- message-id: ${messageId} -->\n${body}`,
+          repoToken: process.env.GITHUB_TOKEN,
+        })
+        return res.status(200).json(response)
+      }
+    }
+
+    // Create new comment if no existing comment found or no messageId provided
     const response = await createComment(httpClient, {
       owner,
       repo,
       issueNumber,
-      body: req.body.body,
+      body: messageId ? `<!-- message-id: ${messageId} -->\n${body}` : body,
       repoToken: process.env.GITHUB_TOKEN,
     })
 
