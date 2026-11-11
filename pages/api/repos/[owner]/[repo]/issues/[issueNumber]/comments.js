@@ -3,20 +3,29 @@ import { HttpClient } from '@actions/http-client'
 const createOrUpdateComment = async (http, params) => {
   const { repoToken, owner, repo, issueNumber, body } = params
 
-  // Fetch existing comments
-  const commentsResponse = await http.getJson(
-    `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
-    {
-      accept: 'application/vnd.github.v3+json',
-      authorization: `token ${repoToken}`,
+  const perPage = 100
+  let page = 1
+  let existingComment
+
+  // Search every page before deciding that a new comment is needed.
+  while (true) {
+    const commentsResponse = await http.getJson(
+      `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=${perPage}&page=${page}`,
+      {
+        accept: 'application/vnd.github.v3+json',
+        authorization: `token ${repoToken}`,
+      }
+    )
+
+    existingComment = commentsResponse.result.find(comment =>
+      comment.user.login === "tscircuitbot"
+    )
+
+    if (existingComment || commentsResponse.result.length < perPage) {
+      break
     }
-  )
-
-  // Check if a comment already exists
-  const existingComment = commentsResponse.result.find(comment =>
-    comment.user.login === "tscircuitbot"
-  )
-
+    page += 1
+  }
 
   if (existingComment) {
     // Update the existing comment
